@@ -68,8 +68,6 @@ function renderAlbum(album) {
   "              <div class='panel-footer'>" +
   "                <div class='panel-footer'>" +
   "                  <button class='btn btn-primary add-song'>Add Song</button>" +
-  "                </div>" +
-  "                <div class='panel-footer'>" +
   "                  <button class='btn btn-primary delete-album'>Delete Album</button>" +
   "                </div>" +
   "              </div>" +
@@ -133,6 +131,7 @@ $('#albums').on('click', '.add-song', function(event) {
   //console.log('id: ' + id);
   $('#songModal').data('album-id', id);
   $('#songModal').modal();
+
 });
 
 //save a new song
@@ -159,6 +158,10 @@ function handleNewSongSubmit() {
     success: handleNewSongSuccess,
     error: handleNewSongError
   });
+
+  // clear the form
+  $('#songName').val('');
+  $('#trackNumber').val('');
 }
 
 function handleNewSongSuccess(json) {
