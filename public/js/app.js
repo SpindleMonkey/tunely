@@ -6,7 +6,7 @@
  */
 
 $(document).ready(function() {
-  console.log('app.js loaded!');
+  //console.log('app.js loaded!');
 
   $.ajax({
     method: 'GET',
@@ -16,7 +16,7 @@ $(document).ready(function() {
   });
 
 function handleSuccess(json) {
-  console.log(json);
+  //console.log(json);
   //var albums = JSON.parse(json);
   json.forEach(function(album) {
     renderAlbum(album);
@@ -68,6 +68,9 @@ function renderAlbum(album) {
   "              <div class='panel-footer'>" +
   "                <div class='panel-footer'>" +
   "                  <button class='btn btn-primary add-song'>Add Song</button>" +
+  "                </div>" +
+  "                <div class='panel-footer'>" +
+  "                  <button class='btn btn-primary delete-album'>Delete Album</button>" +
   "                </div>" +
   "              </div>" +
 
@@ -132,7 +135,8 @@ $('#albums').on('click', '.add-song', function(event) {
   $('#songModal').modal();
 });
 
-//saveSong
+//save a new song
+
 $('#saveSong').on('click', function(event) {
   handleNewSongSubmit();
 });
@@ -192,6 +196,31 @@ function handleUpdatedAlbumSuccess(json) {
 
 function handleUpdatedAlbumError() {
   console.log('failed to get update album. sorry.');
+}
+
+// Delete an album
+
+$('#albums').on('click', '.delete-album', function(event) {
+  var id = $(this).parents('.album').data('album-id');
+  //console.log('id: ' + id);
+  var url = '/api/albums/' + id;
+  //console.log(url);
+
+  $.ajax({
+    method: 'DELETE',
+    url: url,
+    error: handleDeletedAlbumError,
+    success: function(msg) {
+                $("div").find("[data-album-id='" + id + "']").fadeOut(800, function(){
+                $(this).html(msg).fadeIn().delay(2000);
+              });
+            }
+
+  });
+});
+
+function handleDeletedAlbumError() {
+  console.log('failed to delete album. really sorry.');
 }
 
 

@@ -85,6 +85,13 @@ app.post('/api/albums/:album_id/songs', function album_add_song(req, res) {
   });
 });
 
+app.delete('/api/albums/:album_id', function album_delete(req, res) {
+  db.Album.remove({_id: req.params.album_id}, function(err, album) {
+    if (err) res.status(503).send('ERROR:' + err);
+    res.status(200).send('album');
+  });
+});
+
 /**********
  * SERVER *
  **********/
