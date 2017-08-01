@@ -5,6 +5,10 @@ var express = require('express');
 // generate a new express app and call it 'app'
 var app = express();
 
+var bodyParser = require('body-parser');
+app.use(bodyParser.urlencoded({ extended: true }));
+app.use(bodyParser.json());
+
 // serve static files from public folder
 app.use(express.static(__dirname + '/public'));
 
@@ -12,38 +16,7 @@ app.use(express.static(__dirname + '/public'));
  * DATABASE *
  ************/
 
-/* hard-coded data */
-var albums = [];
-albums.push({
-              _id: 132,
-              artistName: 'the Old Kanye',
-              name: 'The College Dropout',
-              releaseDate: '2004, February 10',
-              genres: [ 'rap', 'hip hop' ]
-            });
-albums.push({
-              _id: 133,
-              artistName: 'the New Kanye',
-              name: 'The Life of Pablo',
-              releaseDate: '2016, Febraury 14',
-              genres: [ 'hip hop' ]
-            });
-albums.push({
-              _id: 134,
-              artistName: 'the always rude Kanye',
-              name: 'My Beautiful Dark Twisted Fantasy',
-              releaseDate: '2010, November 22',
-              genres: [ 'rap', 'hip hop' ]
-            });
-albums.push({
-              _id: 135,
-              artistName: 'the sweet Kanye',
-              name: '808s & Heartbreak',
-              releaseDate: '2008, November 24',
-              genres: [ 'r&b', 'electropop', 'synthpop' ]
-            });
-
-
+var db = require('./models');
 
 /**********
  * ROUTES *
@@ -73,9 +46,44 @@ app.get('/api', function api_index (req, res){
   });
 });
 
-app.get('/api/albums', function album_index(req, res){
+app.get('/api/albums', function album_index(req, res) {
+  db.Album.find({}, function(err, albums) {
+    if (err) res.status(404).send('albums not found. sorry.');
+    res.json(albums);
+  });
+});
 
-})
+app.get('/api/albums/:id', function album_show(req, res) {
+  db.Album.findById(req.params.id, function(err, album) {
+    if (err) res.status(404).send('could not find that album. sorry.');
+    res.json(album);
+  });
+});
+
+app.post('/api/albums', function album_post(req, res) {
+  console.log('adding new album');
+  //console.log(req.body.genres);
+  req.body.genres = req.body.genres.split(', ');
+  //console.log(genres);
+
+  db.Album.create(req.body, function(err, album) {
+    if (err) res.status(503).send('could not add new album. sorry');
+    res.json(album);
+  });
+});
+
+app.post('/api/albums/:album_id/songs', function album_add_song(req, res) {
+  db.Album.find(req.params.album_id, function(err, album) {
+    if (err) res.status(404).send('could not find album for new song. sorry.');
+    db.Song.create(req.body, function(err, song) {
+      if (err) res.status(503).send('could not add new song. sorry.');
+      db.Album.update({_id: req.params.album_id}, { $push: {songs: song} }, function(err, album) {
+        if (err) res.status(503).send('could not add song to album. sorry.');
+        res.json(album);
+      });
+    });
+  });
+});
 
 /**********
  * SERVER *
