@@ -54,38 +54,23 @@ sampleSongs.push({ name: 'Stronger',
                    trackNumber: 7
 });
 
-db.Song.remove({}, function(err, song) {
+db.Album.remove({}, function(err, albums){
+  console.log('album.remove');
   if (err) { return console.log('ERROR::' + err); }
-  db.Song.create(sampleSongs, function(err, songs) {
-    if (err) { return console.log('ERROR::' + err); }
-    console.log('all songs: ', sampleSongs);
-    console.log('created ', sampleSongs.length, ' songs');
-
-    // find all the songs because we need their document IDs for the albums:
-    db.Song.find({}, function(err, songs) {
-      if (err) { return console.log('ERROR::' + err); }
-      console.log('got em');
-
-      db.Album.remove({}, function(err, albums){
-        console.log('album.remove');
-        if (err) { return console.log('ERROR::' + err); }
-        albumsList.forEach(function(albumData) {
-          var album= new db.Album({
-            artistName: albumData.artistName,
-            name: albumData.name,
-            releaseDate: albumData.releaseDate,
-            genres: albumData.genres,
-            songs: songs
-          });
-          album.save(function(err, album) {
-            if (err) { return console.log('ERROR::' + err); }
-            console.log('saved ' + album);
-          });
-        });
-      });
+  albumsList.forEach(function(albumData) {
+    var album= new db.Album({
+      artistName: albumData.artistName,
+      name: albumData.name,
+      releaseDate: albumData.releaseDate,
+      genres: albumData.genres,
+      songs: sampleSongs
     });
+    album.save(function(err, album) {
+       if (err) { return console.log('ERROR::' + err); }
+       console.log('saved ' + album);
+     });
   });
 });
 
-//process.exit();
+process.exit();
 
