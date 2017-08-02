@@ -38,10 +38,14 @@ app.get('/', function homepage (req, res) {
 app.get('/api', function api_index (req, res){
   res.json({
     message: "Welcome to tunely!",
-    documentation_url: "https://github.com/tgaff/tunely/api.md",
-    base_url: "http://tunely.herokuapp.com",
+    //documentation_url: "https://github.com/tgaff/tunely/api.md",
+    base_url: "http://localhost:3000",
     endpoints: [
-      {method: "GET", path: "/api", description: "Describes available endpoints"}
+      {method: "GET", path: "/api", description: "Describes available endpoints"},
+      {method: "GET", path: "/api/albums/:id", description: "get a single album by id"},
+      {method: "POST", path: "/api/albums", description: "add a new album"},
+      {method: "POST", path: "/api/albums/:album_id/songs", description: "add a new song to an album"},
+      {method: "DELETE", path: "/api/albums/:album_id", description: "delete an album by id"}
     ]
   });
 });
