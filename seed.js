@@ -54,23 +54,23 @@ sampleSongs.push({ name: 'Stronger',
                    trackNumber: 7
 });
 
+console.log('well, i am here');
 db.Album.remove({}, function(err, albums){
   console.log('album.remove');
   if (err) { return console.log('ERROR::' + err); }
   albumsList.forEach(function(albumData) {
-    var album= new db.Album({
+    console.log('inside forEach');
+    var newAlbum = new db.Album({
       artistName: albumData.artistName,
       name: albumData.name,
       releaseDate: albumData.releaseDate,
       genres: albumData.genres,
       songs: sampleSongs
     });
-    album.save(function(err, album) {
+    newAlbum.save(function(err, theAlbum) {
        if (err) { return console.log('ERROR::' + err); }
-       console.log('saved ' + album);
+       console.log('saved ' + theAlbum);
      });
   });
 });
-
-process.exit();
 

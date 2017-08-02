@@ -66,12 +66,14 @@ app.get('/api/albums/:id', function album_show(req, res) {
 
 app.post('/api/albums', function album_post(req, res) {
   console.log('adding new album');
-  //console.log(req.body.genres);
-  req.body.genres = req.body.genres.split(', ');
-  //console.log(genres);
+  console.log(req.body);
+  if (req.body.genres) {
+    req.body.genres = req.body.genres.split(', ');
+  }
 
   db.Album.create(req.body, function(err, album) {
     if (err) res.status(503).send('could not add new album. sorry');
+    console.log(album);
     res.json(album);
   });
 });

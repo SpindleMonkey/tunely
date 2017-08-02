@@ -102,7 +102,7 @@ function buildSongsHtml(songs) {
 $("form").on('submit', function(event) {
   event.preventDefault();
   var str = $(this).serialize();
-  //console.log(str);
+  console.log(str);
 
   $.ajax({
     method: 'POST',
@@ -117,7 +117,7 @@ $("form").on('submit', function(event) {
 });
 
 function handlePostSuccess(json) {
-  //console.log(json);
+  console.log(json);
   renderAlbum(json);
 }
 
@@ -159,9 +159,6 @@ function handleNewSongSubmit() {
     error: handleNewSongError
   });
 
-  // clear the form
-  $('#songName').val('');
-  $('#trackNumber').val('');
 }
 
 function handleNewSongSuccess(json) {
@@ -193,6 +190,9 @@ function handleUpdatedAlbumSuccess(json) {
   // write out the new contents
   renderAlbum(json);
 
+  // clear the form and then make it go away
+  $('#songName').val('');
+  $('#trackNumber').val('');
   $('#songModal').modal('hide');
 
 }
@@ -213,11 +213,12 @@ $('#albums').on('click', '.delete-album', function(event) {
     method: 'DELETE',
     url: url,
     error: handleDeletedAlbumError,
-    success: function(msg) {
-                $("div").find("[data-album-id='" + id + "']").fadeOut(800, function(){
-                $(this).html(msg).fadeIn().delay(2000);
-              });
-            }
+    success: $("div").find("[data-album-id='" + id + "']").remove()
+    // success: function(msg) {
+    //             $("div").find("[data-album-id='" + id + "']").fadeOut(800, function(){
+    //             $(this).html(msg).fadeIn().delay(2000);
+    //           });
+    //         }
 
   });
 });
